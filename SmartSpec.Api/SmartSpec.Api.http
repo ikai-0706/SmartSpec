@@ -1,0 +1,6 @@
+@SmartSpec.Api_HostAddress = http://localhost:5225
+
+GET {{SmartSpec.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

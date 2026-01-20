@@ -1,0 +1,61 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using SmartSpec.Core.Interfaces;
+using SmartSpec.Core;
+
+namespace SmartSpec.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DocumentsController : ControllerBase
+    {
+        private readonly IDocumentService _documentService;
+
+        public DocumentsController(IDocumentService documentService)
+        {
+            _documentService = documentService;
+        }
+
+        // ==========================================
+        // 👇 這裡改回來了：專門負責「取得全部」
+        // ==========================================
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Document>>> GetDocuments()
+        {
+            // 傳入 null 代表不篩選，抓全部
+            var result = await _documentService.SearchDocumentsAsync(null);
+            return Ok(result);
+        }
+
+        // ==========================================
+        // 👇 這裡改回來了：專門負責「搜尋」
+        //    網址變回：api/Documents/search
+        // ==========================================
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Document>>> SearchDocuments([FromQuery] string keyword)
+        {
+            var result = await _documentService.SearchDocumentsAsync(keyword);
+            return Ok(result);
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadDocument(IFormFile file, [FromForm] string title)
+        {
+            if (file == null || file.Length == 0) return BadRequest("請選擇檔案");
+
+            using var stream = file.OpenReadStream();
+            var document = await _documentService.UploadDocumentAsync(title, stream, file.FileName);
+
+            return Ok(new { Message = "上傳成功", DocId = document.Id });
+        }
+
+        [HttpGet("download/{id}")]
+        public async Task<IActionResult> DownloadDocument(Guid id)
+        {
+            var result = await _documentService.DownloadDocumentAsync(id);
+
+            if (result == null) return NotFound("找不到檔案");
+
+            return File(result.Value.FileBytes, "application/octet-stream", result.Value.FileName);
+        }
+    }
+}

@@ -1,0 +1,106 @@
+﻿@page "/documents"
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<h3>規格書管理系統</h3>
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="輸入關鍵字..."
+           @bind="keyword" @bind:event="oninput" @onkeyup="HandleEnter">
+    <button class="btn btn-primary" @onclick="SearchDocuments">搜尋</button>
+</div>
+
+@if (documents == null)
+{
+    <p><em>正在載入資料中...</em></p>
+}
+else if (documents.Length == 0)
+{
+    <div class="alert alert-warning">找不到相關文件</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>標題</th>
+                <th>上傳時間</th>
+                <th>檔案路徑</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doc in documents)
+            {
+                <tr>
+                    <td>@doc.Title</td>
+                    <td>@doc.UploadedAt.ToString("yyyy/MM/dd HH:mm")</td>
+                    <td class="text-muted small">@doc.FilePath</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Document[]? documents;
+    private string keyword = ""; // 綁定輸入框的變數
+
+    // 頁面載入時，先抓全部
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllDocuments();
+    }
+
+    // 載入全部資料
+    private async Task LoadAllDocuments()
+    {
+        try
+        {
+            documents = await Http.GetFromJsonAsync<Document[]>("api/Documents");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"錯誤: {ex.Message}");
+        }
+    }
+
+    // 3. 執行搜尋
+    private async Task SearchDocuments()
+    {
+        // 如果沒打字，就載入全部
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            await LoadAllDocuments();
+            return;
+        }
+
+        try
+        {
+            // 呼叫後端的搜尋 API
+            // 注意：這裡對應你後端寫的 [HttpGet("search")]
+            documents = await Http.GetFromJsonAsync<Document[]>($"api/Documents/search?keyword={keyword}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"搜尋錯誤: {ex.Message}");
+        }
+    }
+
+    // 讓使用者按 Enter 也能搜尋 (優化體驗)
+    private async Task HandleEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchDocuments();
+        }
+    }
+
+    // 定義資料結構 (跟後端一樣)
+    public class Document
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public string FilePath { get; set; }
+        public DateTime UploadedAt { get; set; }
+    }
+}

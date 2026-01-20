@@ -1,0 +1,106 @@
+﻿@page "/upload"
+@inject HttpClient Http
+@inject NavigationManager Nav // 用來上傳成功後跳轉頁面
+
+<h3>上傳規格書</h3>
+
+<div class="card p-4" style="max-width: 500px;">
+    <div class="mb-3">
+        <label class="form-label">文件標題</label>
+        <input class="form-control" @bind="title" placeholder="請輸入標題 (例如: Server規格書)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">選擇檔案 (PDF/圖片)</label>
+        <InputFile OnChange="HandleFileSelected" class="form-control" />
+    </div>
+
+    @if (selectedFile != null)
+    {
+        <div class="alert alert-info">
+            已選擇: @selectedFile.Name (@(selectedFile.Size / 1024) KB)
+        </div>
+    }
+
+    @if (isUploading)
+    {
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">上傳中...</span>
+        </div>
+    }
+    else
+    {
+        <button class="btn btn-primary" @onclick="SubmitUpload" disabled="@(selectedFile == null)">
+            確認上傳
+        </button>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private string title = "";
+    private IBrowserFile? selectedFile;
+    private bool isUploading = false;
+    private string errorMessage = "";
+
+    // 當使用者選好檔案時觸發
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        // 如果標題還是空的，自動把檔名填入標題 (貼心小功能)
+        if (string.IsNullOrEmpty(title))
+        {
+            title = selectedFile.Name;
+        }
+    }
+
+    // 按下上傳按鈕
+    private async Task SubmitUpload()
+    {
+        if (selectedFile == null) return;
+
+        isUploading = true;
+        errorMessage = "";
+
+        try
+        {
+            // 1. 準備 Multipart 表單資料 (就像傳統 Form 表單一樣)
+            using var content = new MultipartFormDataContent();
+
+            // 加入標題
+            content.Add(new StringContent(title), "title");
+
+            // 加入檔案 (限制最大 10MB)
+            var fileContent = new StreamContent(selectedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(selectedFile.ContentType);
+
+            // "file" 對應後端 Controller 的參數名稱，selectedFile.Name 是檔名
+            content.Add(fileContent, "file", selectedFile.Name);
+
+            // 2. 發送 POST 請求到後端
+            var response = await Http.PostAsync("api/Documents/upload", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // 成功！跳轉回列表頁
+                Nav.NavigateTo("/documents");
+            }
+            else
+            {
+                errorMessage = $"上傳失敗: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"發生錯誤: {ex.Message}";
+        }
+        finally
+        {
+            isUploading = false;
+        }
+    }
+}

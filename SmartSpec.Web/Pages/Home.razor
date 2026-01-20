@@ -1,0 +1,46 @@
+﻿@page "/"
+
+<PageTitle>SmartSpec 首頁</PageTitle>
+
+<div class="text-center mt-5">
+    <h1 class="display-4 fw-bold text-primary">SmartSpec</h1>
+    <p class="lead">智慧規格書管理系統</p>
+    <hr class="my-4">
+    <p>請選擇您要執行的操作：</p>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center g-4">
+
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm hover-effect">
+                <div class="card-body text-center p-5">
+                    <div class="display-1 text-info mb-3">🔍</div>
+                    <h3 class="card-title">搜尋規格書</h3>
+                    <p class="card-text text-muted">瀏覽所有文件或透過關鍵字搜尋特定規格。</p>
+                    <a href="documents" class="btn btn-outline-info btn-lg w-100 mt-3">前往列表</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm hover-effect">
+                <div class="card-body text-center p-5">
+                    <div class="display-1 text-success mb-3">📤</div>
+                    <h3 class="card-title">上傳新文件</h3>
+                    <p class="card-text text-muted">新增 PDF 規格書或相關圖片到資料庫。</p>
+                    <a href="upload" class="btn btn-outline-success btn-lg w-100 mt-3">立即上傳</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+        border-color: #0d6efd;
+    }
+</style>
