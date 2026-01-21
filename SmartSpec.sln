@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Web", "SmartSpec.Web\SmartSpec.Web.csproj", "{EDA211D4-98D3-45B3-81BE-0F42D6B1D469}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Tests", "SmartSpec.Tests\SmartSpec.Tests.csproj", "{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,10 @@ Global
 		{EDA211D4-98D3-45B3-81BE-0F42D6B1D469}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDA211D4-98D3-45B3-81BE-0F42D6B1D469}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDA211D4-98D3-45B3-81BE-0F42D6B1D469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

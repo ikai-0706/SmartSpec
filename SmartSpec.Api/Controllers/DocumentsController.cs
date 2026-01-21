@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartSpec.Core.Interfaces;
 using SmartSpec.Core;
+using Microsoft.AspNetCore.Authorization; // <--- 記得加這行
 
 namespace SmartSpec.Api.Controllers
 {
@@ -37,6 +38,8 @@ namespace SmartSpec.Api.Controllers
             return Ok(result);
         }
 
+        // [Security] 加上 Authorize 標籤，代表此 API 需要 JWT Token 才能存取
+        [Authorize]
         [HttpPost("upload")]
         public async Task<IActionResult> UploadDocument(IFormFile file, [FromForm] string title)
         {
