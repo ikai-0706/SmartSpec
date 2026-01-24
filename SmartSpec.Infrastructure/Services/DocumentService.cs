@@ -24,39 +24,59 @@ namespace SmartSpec.Infrastructure.Services
             return await query.ToListAsync();
         }
 
-        // 實作上傳
+        // 實作上傳 (已加入防呆檢查)
         public async Task<Document> UploadDocumentAsync(string title, Stream fileStream, string originalFileName)
         {
-            // 1. 決定檔案要存去哪裡
-            // 取得目前專案執行的目錄 (SmartSpec.Api)
+            // ==========================================
+            // 👇 1. [新增] 檢查檔案大小 (限制 10 MB)
+            // ==========================================
+            const long maxFileSize = 10 * 1024 * 1024; // 10 MB
+            if (fileStream.Length > maxFileSize)
+            {
+                throw new ArgumentException($"檔案過大！請上傳小於 {maxFileSize / 1024 / 1024} MB 的檔案。");
+            }
+
+            // ==========================================
+            // 👇 2. [新增] 檢查副檔名 (白名單機制)
+            // ==========================================
+            var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx" };
+            var fileExtension = Path.GetExtension(originalFileName).ToLowerInvariant(); // 轉小寫比對
+
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                throw new ArgumentException($"不支援的檔案格式：{fileExtension}。僅允許：PDF, 圖片, Word 文件。");
+            }
+
+            // ==========================================
+            // 👇 以下是原本的儲存邏輯
+            // ==========================================
+
+            // 決定檔案要存去哪裡 (SmartSpec.Api/wwwroot/uploads)
             var currentDirectory = Directory.GetCurrentDirectory();
             var uploadsFolder = Path.Combine(currentDirectory, "wwwroot", "uploads");
 
-            // 如果資料夾不存在，就建立它 (防呆)
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            // 2. 產生一個安全的新檔名 (避免檔名重複或含有特殊字元)
-            // 例如：原始 "規格書.pdf" -> 存成 "Guid-規格書.pdf"
-            var fileExtension = Path.GetExtension(originalFileName);
+            // 產生亂數檔名
             var safeFileName = $"{Guid.NewGuid()}{fileExtension}";
-            var filePath = Path.Combine(uploadsFolder, safeFileName);
+            var fullPath = Path.Combine(uploadsFolder, safeFileName); // 這是存到硬碟的「絕對路徑」
 
-            // 3. 將檔案寫入硬碟
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            // 寫入硬碟
+            using (var stream = new FileStream(fullPath, FileMode.Create))
             {
                 await fileStream.CopyToAsync(stream);
             }
 
-            // 4. 建立資料庫紀錄
-            // 注意：FilePath 我們存 "相對路徑"，方便之後網頁讀取
+            // 建立資料庫紀錄
             var document = new Document
             {
                 Id = Guid.NewGuid(),
                 Title = title,
-                FilePath = $"uploads/{safeFileName}", // 存這個路徑
+                // 資料庫存相對路徑，方便前端 <img> 或 <a> 標籤使用
+                FilePath = $"uploads/{safeFileName}",
                 UploadedAt = DateTime.UtcNow
             };
 
@@ -70,12 +90,17 @@ namespace SmartSpec.Infrastructure.Services
         public async Task<(byte[] FileBytes, string FileName)?> DownloadDocumentAsync(Guid id)
         {
             var document = await _context.Documents.FindAsync(id);
+            if (document == null) return null;
 
-            // 檢查資料庫有沒有，且硬碟檔案還在不在
-            if (document == null || !File.Exists(document.FilePath)) return null;
+            // ⚠️ 修正路徑讀取：必須組出完整的硬碟路徑，不然 File.ReadAllBytesAsync 會找不到
+            var currentDirectory = Directory.GetCurrentDirectory();
+            // document.FilePath 是 "uploads/xxx.pdf"，所以要把它拼在 "wwwroot" 後面
+            var fullPath = Path.Combine(currentDirectory, "wwwroot", document.FilePath);
 
-            var fileBytes = await File.ReadAllBytesAsync(document.FilePath);
-            var fileName = Path.GetFileName(document.FilePath);
+            if (!File.Exists(fullPath)) return null;
+
+            var fileBytes = await File.ReadAllBytesAsync(fullPath);
+            var fileName = Path.GetFileName(fullPath);
 
             return (fileBytes, fileName);
         }
