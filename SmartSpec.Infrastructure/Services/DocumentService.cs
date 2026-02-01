@@ -104,5 +104,33 @@ namespace SmartSpec.Infrastructure.Services
 
             return (fileBytes, fileName);
         }
+
+
+        // 實作刪除功能
+        public async Task DeleteDocumentAsync(Guid id)
+        {
+            // 1. 先去資料庫找這筆資料
+            var document = await _context.Documents.FindAsync(id);
+
+            // 如果找不到，直接結束 (或是你要拋出 Exception 也可以)
+            if (document == null) return;
+
+            // 2. 處理實體檔案刪除
+            // 必須組出完整的物理路徑 (例如 C:\Projects\SmartSpec\wwwroot\uploads\xxx.pdf)
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var fullPath = Path.Combine(currentDirectory, "wwwroot", document.FilePath);
+
+            // 檢查檔案是否存在，存在就殺掉
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+
+            // 3. 刪除資料庫紀錄
+            _context.Documents.Remove(document);
+
+            // 4. 儲存變更 (這時候 SQL Delete 指令才會送出)
+            await _context.SaveChangesAsync();
+        }
     }
 }

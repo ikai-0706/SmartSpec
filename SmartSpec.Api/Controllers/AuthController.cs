@@ -35,8 +35,21 @@ namespace SmartSpec.Api.Controllers
         // 產生 JWT Token 的核心邏輯
         private string GenerateJwtToken(string username)
         {
-            // 1. 從設定檔讀取密鑰
-            var keyStr = _configuration["Jwt:Key"] ?? "123789654asdjkl_SmartSpec_SecureKey_2026";
+            // 1. 從設定檔讀取密鑰 (移除原本的 ?? "..." 預設值)
+            var keyStr = _configuration["Jwt:Key"];
+
+            // [資安修正] Fail Fast: 如果沒設定金鑰，直接報錯，不要偷偷用預設值
+            if (string.IsNullOrEmpty(keyStr))
+            {
+                throw new InvalidOperationException("嚴重錯誤: appsettings.json 中缺少 Jwt:Key 設定，系統無法啟動。");
+            }
+
+            // [資安修正] 檢查長度: HMACSHA256 至少需要 32 bytes (256 bits)
+            if (keyStr.Length < 32)
+            {
+                throw new InvalidOperationException("嚴重錯誤: Jwt:Key 長度不足，至少需要 32 個字元以確保安全。");
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyStr));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
