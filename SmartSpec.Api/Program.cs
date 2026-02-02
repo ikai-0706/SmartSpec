@@ -34,7 +34,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         // 確保 Key 足夠長，避免錯誤，這裡直接從設定檔讀取，若讀不到給預設值防呆
-        var keyStr = builder.Configuration["Jwt:Key"] ?? "123789654asdjkl_SmartSpec_SecureKey_2026";
+        var keyStr = builder.Configuration["Jwt:Key"];
+        if (string.IsNullOrEmpty(keyStr))
+        {
+            throw new InvalidOperationException("啟動失敗：未設定 Jwt:Key！請使用 User Secrets 設定。");
+        }
 
         options.TokenValidationParameters = new TokenValidationParameters
         {

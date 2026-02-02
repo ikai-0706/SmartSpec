@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartSpec.Core.Interfaces;
 using SmartSpec.Core;
+using SmartSpec.Api.Dtos;   
 using Microsoft.AspNetCore.Authorization; // <--- 記得加這行
 
 namespace SmartSpec.Api.Controllers
@@ -20,26 +21,44 @@ namespace SmartSpec.Api.Controllers
         // 👇 這裡改回來了：專門負責「取得全部」
         // ==========================================
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Document>>> GetDocuments()
+        public async Task<ActionResult<IEnumerable<DocumentDto>>> GetDocuments()
         {
-            // 傳入 null 代表不篩選，抓全部
-            var result = await _documentService.SearchDocumentsAsync(null);
-            return Ok(result);
+            // 1. 從 Service 拿到原始資料 (Entity)
+            var documents = await _documentService.SearchDocumentsAsync(null);
+
+            // 2. 轉換成 DTO (Entity -> DTO)
+            var dtos = documents.Select(d => new DocumentDto
+            {
+                Id = d.Id,
+                Title = d.Title,
+                UploadedAt = d.UploadedAt,
+                // 我們可以在這裡做一點邏輯，例如只回傳副檔名
+                FileExtension = Path.GetExtension(d.FilePath)
+            });
+
+            return Ok(dtos);
         }
 
-        // ==========================================
-        // 👇 這裡改回來了：專門負責「搜尋」
-        //    網址變回：api/Documents/search
-        // ==========================================
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Document>>> SearchDocuments([FromQuery] string keyword)
+        public async Task<ActionResult<IEnumerable<DocumentDto>>> SearchDocuments([FromQuery] string keyword)
         {
-            var result = await _documentService.SearchDocumentsAsync(keyword);
-            return Ok(result);
+            var documents = await _documentService.SearchDocumentsAsync(keyword);
+
+            // 同樣做轉換
+            var dtos = documents.Select(d => new DocumentDto
+            {
+                Id = d.Id,
+                Title = d.Title,
+                UploadedAt = d.UploadedAt,
+                FileExtension = Path.GetExtension(d.FilePath)
+            });
+
+            return Ok(dtos);
         }
 
         // [Security] 加上 Authorize 標籤，代表此 API 需要 JWT Token 才能存取
         [Authorize]
+
         [HttpPost("upload")]
         public async Task<IActionResult> UploadDocument(IFormFile file, [FromForm] string title)
         {
