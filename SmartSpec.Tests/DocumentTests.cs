@@ -1,7 +1,4 @@
-﻿using SmartSpec.Core;
-using Xunit; // 引用測試框架
-
-namespace SmartSpec.Tests
+﻿namespace SmartSpec.Tests
 {
     public class DocumentTests
     {

@@ -4,16 +4,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Api", "SmartSpec.Api\SmartSpec.Api.csproj", "{D3E6CCC3-54A4-FF57-27A5-521548B193BF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Core", "SmartSpec.Core\SmartSpec.Core.csproj", "{D3932A14-5A86-FC87-E388-F5F5645546A6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64} = {F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Infrastructure", "SmartSpec.Infrastructure\SmartSpec.Infrastructure.csproj", "{4F2EEFD0-2A3F-829E-145A-0ABA14A9341D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64} = {F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Web", "SmartSpec.Web\SmartSpec.Web.csproj", "{EDA211D4-98D3-45B3-81BE-0F42D6B1D469}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4F2EEFD0-2A3F-829E-145A-0ABA14A9341D} = {4F2EEFD0-2A3F-829E-145A-0ABA14A9341D}
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64} = {F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Tests", "SmartSpec.Tests\SmartSpec.Tests.csproj", "{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Domain", "SmartSpec.Domain\SmartSpec.Domain.csproj", "{0711489D-06FE-4591-8E8E-0FB245758931}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSpec.Application", "SmartSpec.Application\SmartSpec.Application.csproj", "{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0711489D-06FE-4591-8E8E-0FB245758931} = {0711489D-06FE-4591-8E8E-0FB245758931}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +40,6 @@ Global
 		{D3E6CCC3-54A4-FF57-27A5-521548B193BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3E6CCC3-54A4-FF57-27A5-521548B193BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3E6CCC3-54A4-FF57-27A5-521548B193BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3932A14-5A86-FC87-E388-F5F5645546A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3932A14-5A86-FC87-E388-F5F5645546A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3932A14-5A86-FC87-E388-F5F5645546A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3932A14-5A86-FC87-E388-F5F5645546A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F2EEFD0-2A3F-829E-145A-0ABA14A9341D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F2EEFD0-2A3F-829E-145A-0ABA14A9341D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F2EEFD0-2A3F-829E-145A-0ABA14A9341D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,6 +52,14 @@ Global
 		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7EB3810-BDBE-4B5F-85AC-CB43A0A4E2EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0711489D-06FE-4591-8E8E-0FB245758931}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0711489D-06FE-4591-8E8E-0FB245758931}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0711489D-06FE-4591-8E8E-0FB245758931}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0711489D-06FE-4591-8E8E-0FB245758931}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6BD95C9-26E0-4853-A6A4-42BE1CC09F64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

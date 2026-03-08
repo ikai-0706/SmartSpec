@@ -17,7 +17,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SmartSpec.Core\SmartSpec.Core.csproj" />
 		<ProjectReference Include="..\SmartSpec.Infrastructure\SmartSpec.Infrastructure.csproj" />
 	</ItemGroup>
 

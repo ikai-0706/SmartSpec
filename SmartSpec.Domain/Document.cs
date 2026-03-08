@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartSpec.Core
+namespace SmartSpec.Domain
 {
     public class Document
     {

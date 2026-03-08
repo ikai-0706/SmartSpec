@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
-using SmartSpec.Core; // 引用 Document 類別
+using SmartSpec.Application; // 引用 Document 類別
 
-namespace SmartSpec.Core.Interfaces
+namespace SmartSpec.Application.Interfaces
 {
     public interface IDocumentService
     {

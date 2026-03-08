@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartSpec.Core.Interfaces;
-using SmartSpec.Core;
-using SmartSpec.Api.Dtos;   
+using SmartSpec.Api.Dtos;
 using Microsoft.AspNetCore.Authorization; // <--- 記得加這行
 
 namespace SmartSpec.Api.Controllers
@@ -45,13 +43,7 @@ namespace SmartSpec.Api.Controllers
             var documents = await _documentService.SearchDocumentsAsync(keyword);
 
             // 同樣做轉換
-            var dtos = documents.Select(d => new DocumentDto
-            {
-                Id = d.Id,
-                Title = d.Title,
-                UploadedAt = d.UploadedAt,
-                FileExtension = Path.GetExtension(d.FilePath)
-            });
+            
 
             return Ok(dtos);
         }
